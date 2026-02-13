@@ -32,10 +32,11 @@ button {
     border-radius: 12px;
     cursor: pointer;
     margin: 10px;
+    transition: transform 0.25s ease, left 0.25s ease, top 0.25s ease;
 }
 
 #yesBtn { background: #ff4d88; color: white; }
-#noBtn { background: white; color: #a4508b; }
+#noBtn  { background: white; color: #a4508b; position: relative; }
 
 #celebration {
     display: none;
@@ -48,19 +49,19 @@ button {
     to { opacity: 1; transform: scale(1); }
 }
 
-/* Roses */
+/* 🌹 Roses */
 .rose {
     position: absolute;
-    font-size: 24px;
-    animation: fall 4s linear forwards;
+    font-size: 26px;
+    animation: fall linear forwards;
 }
 
 @keyframes fall {
-    from { transform: translateY(-50px) rotate(0deg); opacity: 1; }
-    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    from { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+    to   { transform: translateY(110vh) rotate(540deg); opacity: 0; }
 }
 
-/* Fireworks canvas */
+/* 🎆 Fireworks canvas */
 canvas {
     position: fixed;
     top: 0;
@@ -90,9 +91,7 @@ const yesBtn = document.getElementById("yesBtn");
 const celebration = document.getElementById("celebration");
 const question = document.getElementById("question");
 
-let scale = 1;
-
-/* NO button runs away */
+/* ❌ NO button dodges instead of shrinking */
 function moveButton() {
     const x = Math.random() * (window.innerWidth - 120);
     const y = Math.random() * (window.innerHeight - 60);
@@ -100,17 +99,12 @@ function moveButton() {
     noBtn.style.position = "absolute";
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
-
-    scale *= 0.85;
-    noBtn.style.transform = "scale(" + scale + ")";
-
-    if (scale < 0.4) noBtn.innerText = "just press yes 😭";
 }
 
 noBtn.addEventListener("mouseover", moveButton);
 noBtn.addEventListener("click", moveButton);
 
-/* YES button celebration */
+/* ✅ YES = fireworks + roses */
 yesBtn.addEventListener("click", function () {
     question.style.display = "none";
     yesBtn.style.display = "none";
@@ -118,24 +112,32 @@ yesBtn.addEventListener("click", function () {
     celebration.style.display = "block";
 
     startFireworks();
-    scatterRoses();
+    startRoses();
 });
 
-/* 🌹 ROSES */
-function scatterRoses() {
-    for (let i = 0; i < 25; i++) {
-        const rose = document.createElement("div");
-        rose.className = "rose";
-        rose.innerHTML = "🌹";
-        rose.style.left = Math.random() * 100 + "vw";
-        rose.style.animationDuration = (3 + Math.random() * 2) + "s";
-        document.body.appendChild(rose);
+/* 🌹 Continuous Roses Burst */
+function startRoses() {
+    let duration = 4000; // how long roses fall
+    let end = Date.now() + duration;
 
-        setTimeout(() => rose.remove(), 5000);
-    }
+    (function frame() {
+        createRose();
+        if (Date.now() < end) requestAnimationFrame(frame);
+    })();
 }
 
-/* 🎆 FIREWORKS */
+function createRose() {
+    const rose = document.createElement("div");
+    rose.className = "rose";
+    rose.innerHTML = "🌹";
+    rose.style.left = Math.random() * 100 + "vw";
+    rose.style.animationDuration = (3 + Math.random() * 2) + "s";
+    document.body.appendChild(rose);
+
+    setTimeout(() => rose.remove(), 5000);
+}
+
+/* 🎆 Fireworks */
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
@@ -145,32 +147,35 @@ let particles = [];
 
 function startFireworks() {
     setInterval(() => {
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 70; i++) {
             particles.push({
-                x: canvas.width / 2,
-                y: canvas.height / 2,
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height / 2,
                 angle: Math.random() * Math.PI * 2,
-                speed: Math.random() * 4 + 2,
-                radius: 2
+                speed: Math.random() * 3 + 2,
+                life: 80
             });
         }
-    }, 600);
+    }, 500);
 
     animate();
 }
 
 function animate() {
-    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    particles.forEach(p => {
+    particles.forEach((p, i) => {
         p.x += Math.cos(p.angle) * p.speed;
         p.y += Math.sin(p.angle) * p.speed;
+        p.life--;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
         ctx.fillStyle = "white";
         ctx.fill();
+
+        if (p.life <= 0) particles.splice(i, 1);
     });
 
     requestAnimationFrame(animate);
