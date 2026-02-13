@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Yaya & Rou 💜</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #5f0a87, #a4508b, #ff7eb3);
+        font-family: "Georgia", serif;
+        overflow: hidden;
+    }
+
+    .container {
+        text-align: center;
+        color: white;
+    }
+
+    h1 {
+        font-size: 2.7rem;
+        margin-bottom: 40px;
+        letter-spacing: 1px;
+    }
+
+    button {
+        padding: 15px 30px;
+        font-size: 18px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        margin: 10px;
+        transition: all 0.2s ease;
+    }
+
+    #yesBtn {
+        background: #ff4d88;
+        color: white;
+        box-shadow: 0 0 20px rgba(255,77,136,0.6);
+    }
+
+    #yesBtn:hover {
+        transform: scale(1.1);
+    }
+
+    #noBtn {
+        background: #ffffff;
+        color: #a4508b;
+        position: absolute;
+    }
+
+    #celebration {
+        display: none;
+        font-size: 3.2rem;
+        animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.6); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1 id="question">Rou, will you be my Valentine? 💜<br>— Yaya</h1>
+
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No</button>
+
+    <div id="celebration">YAAAAAAY!!! 💜💜💜<br>Yaya & Rou Forever</div>
+</div>
+
+<script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const celebration = document.getElementById("celebration");
+    const question = document.getElementById("question");
+
+    let scale = 1;
+
+    function moveButton() {
+        const x = Math.random() * (window.innerWidth - 120);
+        const y = Math.random() * (window.innerHeight - 60);
+
+        noBtn.style.left = ${x}px;
+        noBtn.style.top = ${y}px;
+
+        // Shrinks every time she tries to click it
+        scale *= 0.85;
+        noBtn.style.transform = scale(${scale});
+
+        if (scale < 0.4) {
+            noBtn.innerText = "okay just press yes 😭";
+        }
+    }
+
+    noBtn.addEventListener("mouseover", moveButton);
+    noBtn.addEventListener("click", moveButton);
+
+    yesBtn.addEventListener("click", () => {
+        question.style.display = "none";
+        yesBtn.style.display = "none";
+        noBtn.style.display = "none";
+        celebration.style.display = "block";
+    });
+</script>
+
+</body>
+</html>
