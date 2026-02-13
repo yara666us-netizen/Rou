@@ -12,19 +12,20 @@
         justify-content: center;
         align-items: center;
         background: linear-gradient(135deg, #5f0a87, #a4508b, #ff7eb3);
-        font-family: "Georgia", serif;
+        font-family: Georgia, serif;
         overflow: hidden;
     }
 
     .container {
         text-align: center;
         color: white;
+        position: relative;
+        z-index: 2;
     }
 
     h1 {
         font-size: 2.7rem;
         margin-bottom: 40px;
-        letter-spacing: 1px;
     }
 
     button {
@@ -47,23 +48,23 @@
         transform: scale(1.1);
     }
 
+    /* Start NO button in a normal place */
     #noBtn {
         background: #ffffff;
         color: #a4508b;
-        position: absolute;
+        position: relative;
     }
 
     #celebration {
         display: none;
-        font-size: 3.2rem;
-        animation: fadeIn 1s ease forwards;
+        font-size: 3rem;
+        animation: pop 0.7s ease forwards;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: scale(0.6); }
+    @keyframes pop {
+        from { opacity: 0; transform: scale(0.5); }
         to { opacity: 1; transform: scale(1); }
     }
-
 </style>
 </head>
 
@@ -75,10 +76,12 @@
     <button id="yesBtn">Yes 💖</button>
     <button id="noBtn">No</button>
 
-    <div id="celebration">YAAAAAAY!!! 💜💜💜<br>Yaya & Rou Forever</div>
+    <div id="celebration">YAAAAAAY!!! 💜<br>Yaya & Rou Forever</div>
 </div>
 
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const celebration = document.getElementById("celebration");
@@ -90,12 +93,12 @@
         const x = Math.random() * (window.innerWidth - 120);
         const y = Math.random() * (window.innerHeight - 60);
 
-        noBtn.style.left = ${x}px;
-        noBtn.style.top = ${y}px;
+        noBtn.style.position = "absolute";
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
 
-        // Shrinks every time she tries to click it
         scale *= 0.85;
-        noBtn.style.transform = scale(${scale});
+        noBtn.style.transform = "scale(" + scale + ")";
 
         if (scale < 0.4) {
             noBtn.innerText = "okay just press yes 😭";
@@ -105,12 +108,14 @@
     noBtn.addEventListener("mouseover", moveButton);
     noBtn.addEventListener("click", moveButton);
 
-    yesBtn.addEventListener("click", () => {
+    yesBtn.addEventListener("click", function () {
         question.style.display = "none";
         yesBtn.style.display = "none";
         noBtn.style.display = "none";
         celebration.style.display = "block";
     });
+
+});
 </script>
 
 </body>
