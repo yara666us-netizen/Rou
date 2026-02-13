@@ -23,7 +23,10 @@ body {
     z-index: 2;
 }
 
-h1 { font-size: 2.7rem; margin-bottom: 40px; }
+h1 {
+    font-size: 2.7rem;
+    margin-bottom: 40px;
+}
 
 button {
     padding: 15px 30px;
@@ -32,11 +35,19 @@ button {
     border-radius: 12px;
     cursor: pointer;
     margin: 10px;
-    transition: transform 0.25s ease, left 0.25s ease, top 0.25s ease;
+    transition: left 0.25s ease, top 0.25s ease, transform 0.2s ease;
 }
 
-#yesBtn { background: #ff4d88; color: white; }
-#noBtn  { background: white; color: #a4508b; position: relative; }
+#yesBtn {
+    background: #ff4d88;
+    color: white;
+}
+
+#noBtn {
+    background: white;
+    color: #a4508b;
+    position: relative;
+}
 
 #celebration {
     display: none;
@@ -45,7 +56,7 @@ button {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.6); }
+    from { opacity: 0; transform: scale(0.7); }
     to { opacity: 1; transform: scale(1); }
 }
 
@@ -61,13 +72,14 @@ button {
     to   { transform: translateY(110vh) rotate(540deg); opacity: 0; }
 }
 
-/* 🎆 Fireworks canvas */
+/* 🎆 Fireworks overlay (transparent) */
 canvas {
     position: fixed;
     top: 0;
     left: 0;
     pointer-events: none;
     z-index: 1;
+    background: transparent;
 }
 </style>
 </head>
@@ -78,8 +90,10 @@ canvas {
 
 <div class="container">
     <h1 id="question">Rou, will you be my Valentine? 💜<br>— Yaya</h1>
+
     <button id="yesBtn">Yes 💖</button>
     <button id="noBtn">No</button>
+
     <div id="celebration">YAAAAAAY!!! 💜<br>Yaya & Rou Forever</div>
 </div>
 
@@ -91,7 +105,7 @@ const yesBtn = document.getElementById("yesBtn");
 const celebration = document.getElementById("celebration");
 const question = document.getElementById("question");
 
-/* ❌ NO button dodges instead of shrinking */
+/* ❌ NO button dodges */
 function moveButton() {
     const x = Math.random() * (window.innerWidth - 120);
     const y = Math.random() * (window.innerHeight - 60);
@@ -104,7 +118,7 @@ function moveButton() {
 noBtn.addEventListener("mouseover", moveButton);
 noBtn.addEventListener("click", moveButton);
 
-/* ✅ YES = fireworks + roses */
+/* ✅ YES = celebration */
 yesBtn.addEventListener("click", function () {
     question.style.display = "none";
     yesBtn.style.display = "none";
@@ -115,9 +129,9 @@ yesBtn.addEventListener("click", function () {
     startRoses();
 });
 
-/* 🌹 Continuous Roses Burst */
+/* 🌹 Roses */
 function startRoses() {
-    let duration = 4000; // how long roses fall
+    let duration = 4000;
     let end = Date.now() + duration;
 
     (function frame() {
@@ -137,9 +151,10 @@ function createRose() {
     setTimeout(() => rose.remove(), 5000);
 }
 
-/* 🎆 Fireworks */
+/* 🎆 Fireworks (transparent canvas) */
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -162,8 +177,7 @@ function startFireworks() {
 }
 
 function animate() {
-    ctx.fillStyle = "rgba(0,0,0,0.15)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // keeps it transparent
 
     particles.forEach((p, i) => {
         p.x += Math.cos(p.angle) * p.speed;
@@ -172,7 +186,7 @@ function animate() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "rgba(255,255,255," + (p.life / 80) + ")";
         ctx.fill();
 
         if (p.life <= 0) particles.splice(i, 1);
